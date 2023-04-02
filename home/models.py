@@ -18,7 +18,7 @@ class testimonial_table(models.Model):
     
 class video_table(models.Model):
     heading = models.CharField(max_length=50)
-    image_link = models.URLField(max_length=300)
+    image = models.ImageField(upload_to='video_table_images/')
     ytplaylist_link = models.URLField(max_length=300)
 
     def __str__(self):

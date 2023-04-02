@@ -37,7 +37,7 @@ class HomeView(View):
             video_list = []
             for video in video_table.objects.all():
                 video_list.append({
-                    "imageLink": video.image_link,
+                    "imageLink": video.image.url,
                     "heading": video.heading,
                     "ytPlaylistLink": video.ytplaylist_link
                 })
