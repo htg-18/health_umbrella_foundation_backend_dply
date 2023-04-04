@@ -3,26 +3,39 @@ from PIL import Image
 import os
 import datetime
 
+
 class disease_table(models.Model):
     disease = models.CharField(max_length=100)
+    timestamp = models.DateTimeField(default=datetime.datetime.now())
+
+    class Meta: 
+        ordering = ['-timestamp'] # ordered by decending timestamp
 
     def __str__(self):
         return self.disease
     
 class testimonial_table(models.Model):
+    timestamp = models.DateTimeField(default=datetime.datetime.now())
     heading = models.CharField(max_length=100)
     text = models.TextField(max_length=1000)
     name = models.CharField(max_length=50)
     location = models.CharField(max_length=100)
     show = models.BooleanField(default=False)
 
+    class Meta:
+        ordering = ['-timestamp'] # ordered by decending timestamp
+
     def __str__(self):
         return self.heading
     
 class video_table(models.Model):
+    timestamp = models.DateTimeField(default=datetime.datetime.now())
     heading = models.CharField(max_length=50)
     image = models.ImageField(upload_to='video_table_images/')
     ytplaylist_link = models.URLField(max_length=300)
+
+    class Meta:
+        ordering = ['-timestamp'] # ordered by decending timestamp
 
     def __str__(self):
         return self.heading
@@ -50,8 +63,12 @@ class video_table(models.Model):
         super().save(*args, **kwargs)
     
 class key_value_table(models.Model):
+    timestamp = models.DateTimeField(default=datetime.datetime.now())
     key = models.CharField(max_length=100)
     value = models.TextField(max_length=1000)
+
+    class Meta:
+        ordering = ['-timestamp'] # ordered by decending timestamp
 
     def __str__(self):
         return self.key
