@@ -10,10 +10,8 @@ class HomeView(View):
             final_data = {}
 
             # getting data for topSearchPage
-            diseaseList = []
             diseases = disease_table.objects.all()
-            for disease in diseases:
-                diseaseList.append(disease.disease)
+            diseaseList = list(diseases.values_list('disease', flat=True))
             final_data.update({"topSearchPage": {"diseaseList": diseaseList}})
 
             # getting data for ourMissionPage
