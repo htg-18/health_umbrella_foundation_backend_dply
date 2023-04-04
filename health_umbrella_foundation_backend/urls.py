@@ -22,9 +22,10 @@ from django.views.generic import RedirectView
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("home/", include("home.urls")),
-    path('', RedirectView.as_view(url = '/home/', permanent = True)),
+    path("", RedirectView.as_view(url="/home/", permanent=True)),
+    path("footer/", include("footer.urls")),
 ]
 
-urlpatterns += static(settings.STATIC_URL, document_root = settings.STATIC_ROOT)
-urlpatterns += static(settings.MEDIA_URL, document_root = settings.MEDIA_ROOT)
-
+if settings.DEBUG:
+    urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

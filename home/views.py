@@ -47,12 +47,6 @@ class HomeView(View):
             # getting data for bottomSearchPage
             final_data.update({"bottomSearchPage": {"text": key_value_table.objects.get(key="second_search_text").value}})
 
-            # getting data for footer
-            final_data.update({"footer": {
-                "contactEmail": key_value_table.objects.get(key="contact_email_address").value,
-                "contactPhoneNumber": key_value_table.objects.get(key="contact_phone_no").value,
-                "contactAddress": key_value_table.objects.get(key="contact_address").value
-            }})
             return JsonResponse(data=final_data, status=200)
         except:
             return JsonResponse(data={"message": "error while getting data"}, status=404)
