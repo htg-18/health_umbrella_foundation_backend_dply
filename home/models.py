@@ -48,7 +48,8 @@ class video_table(models.Model):
 
     def save(self, *args, **kwargs):
         # rename the image if it is present
-        if self.image:
+        # check if the object is being made first time
+        if self.image and (self.pk is None):
             # Open the uploaded image file and get the filename and extension
             img = Image.open(self.image)
             filename, extension = os.path.splitext(self.image.name)
