@@ -3,6 +3,7 @@ from django.views import View
 from django.http import JsonResponse
 from .models import key_value_table, testimonial_table, video_table
 from disease.models import disease_table
+import logging
 
 class HomeView(View):
     def get(self, request):
@@ -12,7 +13,10 @@ class HomeView(View):
 
             # getting data for topSearchPage
             diseases = disease_table.objects.filter(show=True)
-            diseaseList = list(diseases.values_list('disease_name', flat=True))
+            diseaseList = []
+            for disease in diseases:
+                diseaseList.append(disease.name)
+            print(diseaseList)
             final_data.update({"topSearchPage": {"diseaseList": diseaseList}})
 
             # getting data for ourMissionPage
@@ -49,6 +53,7 @@ class HomeView(View):
             final_data.update({"bottomSearchPage": {"text": key_value_table.objects.get(key="second_search_text").value}})
 
             return JsonResponse(data=final_data, status=200)
-        except:
+        except Exception as e:
+            logging.error(e)
             return JsonResponse(data={"message": "error while getting data"}, status=404)
         
