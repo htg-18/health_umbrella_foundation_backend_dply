@@ -1,7 +1,8 @@
 from django.shortcuts import render
 from django.views import View
 from django.http import JsonResponse
-from .models import disease_table, key_value_table, testimonial_table, video_table
+from .models import key_value_table, testimonial_table, video_table
+from disease.models import disease_table
 
 class HomeView(View):
     def get(self, request):
@@ -10,8 +11,8 @@ class HomeView(View):
             final_data = {}
 
             # getting data for topSearchPage
-            diseases = disease_table.objects.all()
-            diseaseList = list(diseases.values_list('disease', flat=True))
+            diseases = disease_table.objects.filter(show=True)
+            diseaseList = list(diseases.values_list('disease_name', flat=True))
             final_data.update({"topSearchPage": {"diseaseList": diseaseList}})
 
             # getting data for ourMissionPage
