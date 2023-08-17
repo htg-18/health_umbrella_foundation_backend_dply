@@ -154,7 +154,9 @@ USE_TZ = True
 # STATIC_URL = f"https://{AWS_S3_CUSTOM_DOMAIN}/static/"
 # MEDIA_URL = f"https://{AWS_S3_CUSTOM_DOMAIN}/media/"
 
+# setting to run application with aws on server
 STATIC_URL = "/static/"
+STATIC_ROOT = BASE_DIR / "static"
 
 # CORS header settings
 # CORS_ORIGIN_ALLOW_ALL = config("CORS_ORIGIN_ALLOW_ALL")
