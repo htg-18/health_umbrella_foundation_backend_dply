@@ -3,10 +3,11 @@ from .models import disease_table, pathy_table, summary_table, book_table, sourc
 from django.http import JsonResponse
 from django.db import models
 import logging
-
+logger = logging.getLogger('file_log')
 
 class DiseaseView(View):
     def get(self, request, disease):
+        logger.info("\nrequest to disease view")
         try:
             disease_object = disease_table.objects.get(name=disease)
 
@@ -21,7 +22,8 @@ class DiseaseView(View):
             final_data.update({'text': disease_object.text})
             final_data.update({'summary': disease_object.summary})
             final_data.update({'imageLink': disease_object.image_link.url})
-            
+            logger.info("disease, text, summary and imagelink fetched")
+
             # to store different pathies
             all_pathies = {}
 
@@ -35,6 +37,7 @@ class DiseaseView(View):
                     "summary": summary.summary
                 })
             all_pathies.update({"therapiesWithDrugs": therapiesWithDrugs})
+            logger.info("therapies with drugs fetched")
 
             therapiesWithoutDrugs = []
             for pathy in pathy_table.objects.filter(disease__name=disease, type="therapiesWithoutDrugs"):
@@ -45,6 +48,7 @@ class DiseaseView(View):
                     "summary": summary.summary
                 })
             all_pathies.update({"therapiesWithoutDrugs": therapiesWithoutDrugs})
+            logger.info("therapies without drugs fetched")
 
             lessKnownTherapies = []
             for pathy in pathy_table.objects.filter(disease__name=disease, type="lessKnownTherapies"):
@@ -55,17 +59,20 @@ class DiseaseView(View):
                     "summary": summary.summary
                 })
             all_pathies.update({"lessKnownTherapies": lessKnownTherapies})
+            logger.info("less known therapies fetched")
 
             final_data.update({"pathies": all_pathies})
+            logger.info("all therapies data fetched")
 
             return JsonResponse(data=final_data, status=200)
         except Exception as e:
-            logging.error(e)
+            logger.error(e)
             return JsonResponse(data={"message": "error while getting data"}, status=500)
 
 
 class TherapyView(View):
     def get(self, request, disease, pathy):
+        logger.info("\nrequest to therapy view")
         try:
             # check whether show=True for disease
             disease_object = disease_table.objects.get(name=disease)
@@ -81,20 +88,24 @@ class TherapyView(View):
             final_data = {}
             final_data.update({'pathy': pathy})
             final_data.update({'text': summary_table.objects.get(disease__name=disease, pathy__name=pathy).summary})
+            logger.info("pathy name and text fetched")
+
             information_sources = set()
             for data in data_table.objects.filter(disease__name=disease, pathy__name=pathy):
                 information_sources.add(data.source.name)
             final_data.update({'informationSources': list(information_sources)})
+            logger.info("all information source fetched")
             
             return JsonResponse(data=final_data, status=200)
         except Exception as e:
-            logging.error(e)
+            logger.error(e)
             return JsonResponse(data={"message": "error while getting data"}, status=500)
 
 
 
 class BooksView(View):
     def get(self, request, disease, pathy):
+        logger.info("\nrequest to book view")
         try:
             # check whether show=True for disease
             disease_object = disease_table.objects.get(disease_name=disease)
@@ -111,34 +122,40 @@ class BooksView(View):
 
             # get all the relevant books data
             final_data.update({"books": book_table.objects.filter(disease__name=disease, pathy__name=pathy, show=True).values('name', 'author', 'rating', 'text', imageLink=models.F('image_link'), buyLink=models.F('buy_link'))})
+            logger.info("all books fetched")
 
             return JsonResponse(data=final_data, status=200)
         except Exception as e:
-            logging.error(e)
+            logger.error(e)
             return JsonResponse(data={"message": "error while getting data"}, status=500)
 
 
 class SourceView(View):
     def get(self, request, disease, pathy, source):
+        logger.info("\nrequest to source view")
         try:
             # check whether show=True for disease
             disease_object = disease_table.objects.get(name=disease)
             if disease_object.show is False:
+                logger.info("disease show is false")
                 return JsonResponse(data={"message": "No data for this disease"}, status=404)
             
             # check whether show=True for pathy
             pathy_object = pathy_table.objects.get(name=pathy)
             if pathy_object.show is False:
+                logger.info("pathy show is false")
                 return JsonResponse(data={"message": "No data for this Pathy"}, status=404)
             
             # check whether show=True for source
             source_object = source_table.objects.get(name=source)
             if source_object.show is False:
+                logger.info("source show is false")
                 return JsonResponse(data={"message": "No data for this source"}, status=404)
 
             # data to be sent to user
             final_data = {}
             final_data.update({'text': source_table.objects.get(name = source).text})
+            logger.info("source text fetched")
 
             if source=='directCase':
                 # get all the data of direct testimonial
@@ -152,6 +169,7 @@ class SourceView(View):
                         "comment": case.comment
                     })
                 final_data.update({'sourceList': case_list})
+                logger.info("all direct cases fetched")
             else:
                 # get all the data of a source
                 source_list = []
@@ -165,24 +183,28 @@ class SourceView(View):
                         "comment": src.comment
                     })
                 final_data.update({'sourceList': source_list})
+                logger.info("all source data fetched")
 
             if source=='socialMedia':
                 # add whatsapp data if source is social media
                 final_data.update({'whatsappData': whatsapp_table.objects.get(disease__name=disease, pathy__name=pathy, show=True).value})
+                logger.info("whatsapp data fetched")
 
             return JsonResponse(data=final_data, status=200)
         except Exception as e:
-            logging.error(e)
+            logger.error(e)
             return JsonResponse(data={"message": "error while getting data"}, status=500)
 
 
 class CaseView(View):
     def get(self, request, disease, pathy, case_id):
+        logger.info("\nrequest to case view")
         try:
             case_object = case_table.objects.get(pk=case_id)
 
             # check whether show=True for case
             if case_object.show is False:
+                logger.info("case view is false")
                 return JsonResponse(data={"message": "No data for this source"}, status=404)
             
             # data to send to user
@@ -194,6 +216,7 @@ class CaseView(View):
             final_data.update({"allergies": case_object.allergies_link})
             final_data.update({"medicalReport": case_object.reports_link})
             final_data.update({"comment": case_object.comment})
+            logger.info("case general information fetched")
 
             # personal details to add
             personal_details = {}
@@ -201,6 +224,7 @@ class CaseView(View):
             personal_details.update({"sex": case_object.sex.sex})
             personal_details.update({"occupation": case_object.occupation})
             personal_details.update({"region": case_object.state + ", " + case_object.country})
+            logger.info("case user general information fetched")
 
             # add details which allowed to be added
             if case_object.show_name is True:
@@ -214,10 +238,11 @@ class CaseView(View):
 
             if case_object.show_address is True:
                 personal_details.update({"address": case_object.street_address + " (" + case_object.zip_code + ")"})
+            logger.info("user optional information fetched")
 
             # add personal details to final_data
             final_data.update({"personalDetails": personal_details})
             return JsonResponse(data=final_data, status=200)
         except Exception as e:
-            logging.error(e)
+            logger.error(e)
             return JsonResponse(data={"message": "error while getting data"}, status=500)

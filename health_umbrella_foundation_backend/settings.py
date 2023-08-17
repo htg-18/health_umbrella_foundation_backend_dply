@@ -188,3 +188,31 @@ MATERIAL_ADMIN_SITE = {
     #     'site': 'contact_mail',
     # }
 }
+
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'log_file': {
+            'level': 'INFO',  # Set the desired logging level
+            'class': 'logging.FileHandler',
+            'filename': BASE_DIR / 'logs/application.log',  # Regular log file
+        },
+        'error_file': {
+            'level': 'ERROR',  # Set the desired logging level
+            'class': 'logging.FileHandler',
+            'filename': BASE_DIR / 'logs/error.log',  # Error log file
+        },
+    },
+    'loggers': {
+        'file_log': {
+            'handlers': ['log_file', 'error_file'],
+            'level': 'DEBUG',  # Set the desired logging level
+            'propagate': True,
+        },
+        # You can add more loggers for other components of your app
+    },
+}
+
+

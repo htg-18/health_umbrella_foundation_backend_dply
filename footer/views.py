@@ -2,9 +2,12 @@ from django.shortcuts import render
 from django.views import View
 from .models import footer_table
 from django.http import JsonResponse
+import logging
+logger = logging.getLogger('file_log')
 
 class FooterView(View):
     def get(self, request):
+        logger.info("\nrequest to footer")
         try:
             # final data to be sent as response
             final_data = {
@@ -20,7 +23,10 @@ class FooterView(View):
                     "twitterLink": footer_table.objects.get(key="twitter_link").value
                 }
             }
+            logger.info("footer information fetched")
+
             return JsonResponse(data={"footer": final_data}, status=200)
-        except:
+        except Exception as e:
+            logger.error(e)
             return JsonResponse(data={"message": "error while getting data"}, status=200)
 

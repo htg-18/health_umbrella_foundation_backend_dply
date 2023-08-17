@@ -4,9 +4,11 @@ from django.http import JsonResponse
 from .models import key_value_table, testimonial_table, video_table
 from disease.models import disease_table
 import logging
+logger = logging.getLogger('file_log')
 
 class HomeView(View):
     def get(self, request):
+        logger.info("\nrequest to home")
         try:
             # this will be sent to user
             final_data = {}
@@ -16,14 +18,15 @@ class HomeView(View):
             diseaseList = []
             for disease in diseases:
                 diseaseList.append(disease.name)
-            print(diseaseList)
             final_data.update({"topSearchPage": {"diseaseList": diseaseList}})
+            logger.info("all diseases fetched")
 
             # getting data for ourMissionPage
             final_data.update({"ourMissionPage": {
                 "youtubeLink": key_value_table.objects.get(key='our_mission_ytlink').value,
                 "ourMissionText": key_value_table.objects.get(key='our_mission_data').value,
             }})
+            logger.info("our mission fetched")
 
             # getting data for testimonialPage
             testimonial_list = []
@@ -35,6 +38,7 @@ class HomeView(View):
                     "location": testimonial.location
                 })
             final_data.update({"testimonialPage": {"testimonialList": testimonial_list}})
+            logger.info("all testimonial fetched")
 
             # getting data for videoPage
             video_list = []
@@ -48,12 +52,14 @@ class HomeView(View):
                 "text": key_value_table.objects.get(key="video_section_text").value,
                 "videoList": video_list 
             }})
+            logger.info("all videos fetched")
 
             # getting data for bottomSearchPage
             final_data.update({"bottomSearchPage": {"text": key_value_table.objects.get(key="second_search_text").value}})
+            logger.info("bottom search data fetched")
 
             return JsonResponse(data=final_data, status=200)
         except Exception as e:
-            logging.error(e)
+            logger.error(e)
             return JsonResponse(data={"message": "error while getting data"}, status=404)
         
