@@ -8,18 +8,29 @@ logger = logging.getLogger('file_log')
 
 @csrf_exempt
 def add_feeback(request):
+    logger.info("\n request to feedback")
     if request.method!='POST':
+        logger.info("request is not POST")
         return JsonResponse(data={"message": "only POST method allowed"}, status=405)
     try:
+        # decode data
         data = json.loads(request.body.decode('utf-8'))
+        logger.info("decoded data")
+
+        # create feedback object
         feedback_obj = feedback_table(
             rating = int(data.get('rating')),
             feedback = str(data.get('feedback'))
         )
+        logger.info("created feedback object")
+
+        # validate rating
         if feedback_obj.rating>5 or feedback_obj.rating<1:
+            logger.error("invalid rating")
             return JsonResponse(data={"message": "invalid rating"}, status=400)
         
         feedback_obj.save()
+        logger.info("feedback saved")
         return JsonResponse(data={"message":"feedback submitted successfully"}, status=200)
     except Exception as e:
         logger.info(e)
