@@ -4,6 +4,7 @@ from django.http import JsonResponse
 from django.db import models
 import logging
 logger = logging.getLogger('file_log')
+DIRECT_CASE = 'directCase'
 
 class DiseaseView(View):
     def get(self, request, disease):
@@ -30,7 +31,7 @@ class DiseaseView(View):
             # getting data of different types of therapies
             therapiesWithDrugs = []
             for pathy in pathy_table.objects.filter(disease__name=disease, type="therapiesWithDrugs"):
-                summary = summary_table.objects.get(disease__name=disease, pathy__name=pathy)
+                summary = summary_table.objects.get(pathy__pk=pathy.pk)
                 therapiesWithDrugs.append({
                     "name": pathy.name,
                     "imageLink": pathy.image_link.url,
@@ -41,7 +42,7 @@ class DiseaseView(View):
 
             therapiesWithoutDrugs = []
             for pathy in pathy_table.objects.filter(disease__name=disease, type="therapiesWithoutDrugs"):
-                summary = summary_table.objects.get(disease__name=disease, pathy__name=pathy)
+                summary = summary_table.objects.get(pathy__pk=pathy.pk)
                 therapiesWithoutDrugs.append({
                     "name": pathy.name,
                     "imageLink": pathy.image_link.url,
@@ -52,7 +53,7 @@ class DiseaseView(View):
 
             lessKnownTherapies = []
             for pathy in pathy_table.objects.filter(disease__name=disease, type="lessKnownTherapies"):
-                summary = summary_table.objects.get(disease__name=disease, pathy__name=pathy)
+                summary = summary_table.objects.get(pathy__pk=pathy.pk)
                 lessKnownTherapies.append({
                     "name": pathy.name,
                     "imageLink": pathy.image_link.url,
@@ -80,19 +81,23 @@ class TherapyView(View):
                 return JsonResponse(data={"message": "No data for this disease"}, status=404)
             
             # check whether show=True for pathy
-            pathy_object = pathy_table.objects.get(name=pathy)
+            pathy_object = pathy_table.objects.get(disease__name=disease, name=pathy)
             if pathy_object.show is False:
                 return JsonResponse(data={"message": "No data for this Pathy"}, status=404)
             
             # final data to give to user
             final_data = {}
             final_data.update({'pathy': pathy})
-            final_data.update({'text': summary_table.objects.get(disease__name=disease, pathy__name=pathy).summary})
+            final_data.update({'text': summary_table.objects.get(pathy__pk=pathy_object.pk).summary})
             logger.info("pathy name and text fetched")
 
             information_sources = set()
-            for data in data_table.objects.filter(disease__name=disease, pathy__name=pathy):
+            for data in data_table.objects.filter(pathy__pk=pathy_object.pk):
                 information_sources.add(data.source.name)
+
+            if len(case_table.objects.filter(pathy__pk=pathy_object.pk, show=True))!=0:
+                information_sources.add(DIRECT_CASE)
+
             final_data.update({'informationSources': list(information_sources)})
             logger.info("all information source fetched")
             
@@ -108,20 +113,32 @@ class BooksView(View):
         logger.info("\nrequest to book view")
         try:
             # check whether show=True for disease
-            disease_object = disease_table.objects.get(disease_name=disease)
+            disease_object = disease_table.objects.get(name=disease)
             if disease_object.show is False:
                 return JsonResponse(data={"message": "No data for this disease"}, status=404)
             
             # check whether show=True for pathy
-            pathy_object = pathy_table.objects.get(pathy_name=pathy)
+            pathy_object = pathy_table.objects.get(disease__name=disease, name=pathy)
             if pathy_object.show is False:
                 return JsonResponse(data={"message": "No data for this Pathy"}, status=404)
 
             # final data to give to user
             final_data = {}
 
+            # refining book data
+            book_data = []
+            for book in book_table.objects.filter(pathy__pk=pathy_object.pk, show=True):
+                book_data.append({
+                    "name": book.name,
+                    "author": book.author,
+                    "rating": str(book.rating),
+                    "text": book.text,
+                    "imageLink": book.image_link.url,
+                    "buyLink": book.buy_link
+                })
+
             # get all the relevant books data
-            final_data.update({"books": book_table.objects.filter(disease__name=disease, pathy__name=pathy, show=True).values('name', 'author', 'rating', 'text', imageLink=models.F('image_link'), buyLink=models.F('buy_link'))})
+            final_data.update({"books": book_data})
             logger.info("all books fetched")
 
             return JsonResponse(data=final_data, status=200)
@@ -141,7 +158,7 @@ class SourceView(View):
                 return JsonResponse(data={"message": "No data for this disease"}, status=404)
             
             # check whether show=True for pathy
-            pathy_object = pathy_table.objects.get(name=pathy)
+            pathy_object = pathy_table.objects.get(disease__name=disease, name=pathy)
             if pathy_object.show is False:
                 logger.info("pathy show is false")
                 return JsonResponse(data={"message": "No data for this Pathy"}, status=404)
@@ -160,7 +177,7 @@ class SourceView(View):
             if source=='directCase':
                 # get all the data of direct testimonial
                 case_list = []
-                for case in case_table.objects.filter(disease__name = disease, pathy__name=pathy, show=True):
+                for case in case_table.objects.filter(pathy__pk=pathy_object.pk, show=True):
                     case_list.append({
                         "caseId": str(case.pk),
                         "title": case.title,
@@ -173,7 +190,7 @@ class SourceView(View):
             else:
                 # get all the data of a source
                 source_list = []
-                for src in data_table.objects.filter(disease__name = disease, pathy__name=pathy, source__name=source, show=True):
+                for src in data_table.objects.filter(pathy__pk=pathy_object.pk, source__pk=source_object.pk, show=True):
                     source_list.append({
                         "id": str(src.pk),
                         "title": src.title,
@@ -187,7 +204,7 @@ class SourceView(View):
 
             if source=='socialMedia':
                 # add whatsapp data if source is social media
-                final_data.update({'whatsappData': whatsapp_table.objects.get(disease__name=disease, pathy__name=pathy, show=True).value})
+                final_data.update({'whatsappData': whatsapp_table.objects.get(pathy__pk=pathy_object.pk, show=True).link})
                 logger.info("whatsapp data fetched")
 
             return JsonResponse(data=final_data, status=200)
@@ -212,31 +229,43 @@ class CaseView(View):
             final_data.update({"caseId": str(case_id)})
             final_data.update({"title": case_object.title})
             final_data.update({"summary": case_object.summary})
-            final_data.update({"caseHistory": case_object.history_link})
-            final_data.update({"allergies": case_object.allergies_link})
-            final_data.update({"medicalReport": case_object.reports_link})
             final_data.update({"comment": case_object.comment})
+
+            if case_object.history_link is not None:
+                final_data.update({"caseHistory": case_object.history_link})
+            
+            if case_object.allergies_link is not None:
+                final_data.update({"allergies": case_object.allergies_link})
+            
+            if case_object.reports_link is not None:
+                final_data.update({"medicalReport": case_object.reports_link})
             logger.info("case general information fetched")
 
             # personal details to add
             personal_details = {}
-            personal_details.update({"age": case_object.age})
             personal_details.update({"sex": case_object.sex.sex})
-            personal_details.update({"occupation": case_object.occupation})
-            personal_details.update({"region": case_object.state + ", " + case_object.country})
+
+            if case_object.age is not None:
+                personal_details.update({"age": case_object.age})
+
+            if case_object.occupation is not None:
+                personal_details.update({"occupation": case_object.occupation})
+
+            if case_object.state is not None and case_object.country is not None:
+                personal_details.update({"region": case_object.state + ", " + case_object.country})
             logger.info("case user general information fetched")
 
             # add details which allowed to be added
-            if case_object.show_name is True:
+            if case_object.show_name is True and case_object.first_name is not None and case_object.last_name is not None:
                 personal_details.update({"name": case_object.first_name + " " + case_object.last_name})
 
-            if case_object.show_email is True:
+            if case_object.show_email is True and case_object.email_address is not None:
                 personal_details.update({"emailAddress": case_object.email_address})
 
-            if case_object.show_phone_number is True:
+            if case_object.show_phone_number is True and case_object.phone_number is not None:
                 personal_details.update({"phoneNumber": case_object.phone_number})
 
-            if case_object.show_address is True:
+            if case_object.show_address is True and case_object.street_address is not None and case_object.zip_code is not None:
                 personal_details.update({"address": case_object.street_address + " (" + case_object.zip_code + ")"})
             logger.info("user optional information fetched")
 

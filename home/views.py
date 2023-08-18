@@ -42,7 +42,7 @@ class HomeView(View):
 
             # getting data for videoPage
             video_list = []
-            for video in video_table.objects.all():
+            for video in video_table.objects.filter(show=True):
                 video_list.append({
                     "imageLink": video.image.url,
                     "heading": video.heading,

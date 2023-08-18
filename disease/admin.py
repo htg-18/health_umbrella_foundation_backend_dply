@@ -14,22 +14,28 @@ from .models import (
 
 class DiseaseAdmin(admin.ModelAdmin):
     list_filter = ("show",)
+    search_fields = ("name",)
 
 
 class PathyAdmin(admin.ModelAdmin):
-    list_filter = ("show",)
+    list_filter = ("disease","show",)
+    search_fields = ("name",)
 
 
 class DataAdmin(admin.ModelAdmin):
-    list_filter = ("show",)
+    list_display = ("title","pk","pathy","source",)
+    list_filter = ("pathy__disease","pathy__name","source","show",)
+    search_fields = ("title","pk",)
 
 
 class SourceAdmin(admin.ModelAdmin):
-    list_filter = ("show",)
+    search_fields = ("title","pk")
 
 
 class CaseAdmin(admin.ModelAdmin):
-    list_filter = ("show",)
+    list_display = ("title","pk",)
+    list_filter = ("pathy__disease","pathy__name","show",)
+    search_fields = ("pk", "title", "first_name", "last_name")
 
 
 class SexAdmin(admin.ModelAdmin):
@@ -37,11 +43,15 @@ class SexAdmin(admin.ModelAdmin):
 
 
 class BookAdmin(admin.ModelAdmin):
-    list_filter = ("show",)
+    list_display = ("name","author","rating")
+    list_filter = ("pathy__disease","pathy__name","show",)
+    search_fields = ("name","author",)
 
 
 class WhatsappAdmin(admin.ModelAdmin):
-    list_filter = ("show",)
+    list_display = ("pathy",)
+    list_filter = ("pathy__disease","pathy__name","show",)
+    search_fields = ("pathy__name",)
 
 
 admin.site.register(disease_table, DiseaseAdmin)
