@@ -44,7 +44,8 @@ INSTALLED_APPS = [
     "storages",  # added to interact with AWS S3
     "home",
     "footer",
-    "disease"
+    "disease",
+    "ejournal"
 ]
 
 MIDDLEWARE = [
