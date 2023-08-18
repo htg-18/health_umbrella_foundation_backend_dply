@@ -31,7 +31,7 @@ class EjournalView(View):
             logger.info("fetched data for latestEjournalPage")
 
 
-            final_data.update({"allEjournalPage": key_value_table.objects.get(key='all_ejournal_page_text').value})
+            final_data.update({"allEjournalPage": {"text": key_value_table.objects.get(key='all_ejournal_page_text').value}})
             logger.info("fetched data for allEjournalPage")
 
             return JsonResponse(data=final_data, status=200)
