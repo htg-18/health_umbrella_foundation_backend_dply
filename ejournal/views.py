@@ -3,7 +3,6 @@ from django.views import View
 from .models import key_value_table, ejournal_table, subscription_table
 from django.http import JsonResponse
 import logging
-import string, random
 logger = logging.getLogger('file_log')
 
 class EjournalView(View):

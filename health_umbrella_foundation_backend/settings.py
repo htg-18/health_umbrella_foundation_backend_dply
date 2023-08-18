@@ -45,7 +45,8 @@ INSTALLED_APPS = [
     "home",
     "footer",
     "disease",
-    "ejournal"
+    "ejournal",
+    "feedback"
 ]
 
 MIDDLEWARE = [
