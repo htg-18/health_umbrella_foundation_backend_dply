@@ -1,6 +1,7 @@
 from django.db import models
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db.models import Avg
+from simple_history.models import HistoricalRecords
 
 class feedback_table(models.Model):
     rating = models.IntegerField(
@@ -12,6 +13,7 @@ class feedback_table(models.Model):
     feedback = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
     modified_at = models.DateTimeField(auto_now=True)
+    history = HistoricalRecords()
 
     class Meta:
         ordering = ["-created_at"]  # ordered by decending timestamp

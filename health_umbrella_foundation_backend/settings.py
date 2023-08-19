@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "storages",  # added to interact with AWS S3
+    "simple_history", # added to store audit trail
     "home",
     "footer",
     "disease",

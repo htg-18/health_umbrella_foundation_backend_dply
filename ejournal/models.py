@@ -1,5 +1,5 @@
 from django.db import models
-
+from simple_history.models import HistoricalRecords
 
 class ejournal_table(models.Model):
     name = models.CharField(max_length=1000)
@@ -9,6 +9,7 @@ class ejournal_table(models.Model):
     publish_date = models.DateTimeField()
     created_at = models.DateTimeField(auto_now_add=True)
     modified_at = models.DateTimeField(auto_now=True)
+    history = HistoricalRecords()
 
     class Meta:
         ordering = ["-created_at"]  # ordered by decending timestamp
@@ -22,6 +23,7 @@ class subscription_table(models.Model):
     send = models.BooleanField()
     created_at = models.DateTimeField(auto_now_add=True)
     modified_at = models.DateTimeField(auto_now=True)
+    history = HistoricalRecords()
 
     class Meta:
         ordering = ["-created_at"]  # ordered by decending timestamp
@@ -35,6 +37,7 @@ class key_value_table(models.Model):
     value = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
     modified_at = models.DateTimeField(auto_now=True)
+    history = HistoricalRecords()
 
     class Meta:
         ordering = ["-created_at"]  # ordered by decending timestamp

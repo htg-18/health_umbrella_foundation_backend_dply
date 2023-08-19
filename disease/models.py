@@ -1,5 +1,6 @@
 from django.db import models
 from django.core.validators import MinValueValidator, MaxValueValidator
+from simple_history.models import HistoricalRecords
 
 SOURCE_NAME_LIST = ["books", "socialMedia", "youtube", "website", "article", "quora", "directCase"]
 SOURCE_CHOICES = []
@@ -16,6 +17,7 @@ class disease_table(models.Model):
     image_link = models.ImageField(upload_to="disease_images/")
     created_at = models.DateTimeField(auto_now_add=True)
     modified_at = models.DateTimeField(auto_now=True)
+    history = HistoricalRecords()
 
     class Meta:
         ordering = ["-created_at"]  # ordered by decending timestamp
@@ -38,6 +40,7 @@ class pathy_table(models.Model):
     image_link = models.ImageField(upload_to="pathy_images/")
     created_at = models.DateTimeField(auto_now_add=True)
     modified_at = models.DateTimeField(auto_now=True)
+    history = HistoricalRecords()
 
     class Meta:
         ordering = ["-created_at"]  # ordered by decending timestamp
@@ -52,6 +55,7 @@ class source_table(models.Model):
     show = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
     modified_at = models.DateTimeField(auto_now=True)
+    history = HistoricalRecords()
 
     class Meta:
         ordering = ["-created_at"]  # ordered by decending timestamp
@@ -65,6 +69,7 @@ class sex_table(models.Model):
     show = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
     modified_at = models.DateTimeField(auto_now=True)
+    history = HistoricalRecords()
 
     class Meta:
         ordering = ["-created_at"]  # ordered by decending timestamp
@@ -89,6 +94,7 @@ class book_table(models.Model):
     buy_link = models.URLField(max_length=2000, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     modified_at = models.DateTimeField(auto_now=True)
+    history = HistoricalRecords()
 
     class Meta:
         ordering = ["-created_at"]  # ordered by decending timestamp
@@ -102,6 +108,7 @@ class summary_table(models.Model):
     summary = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
     modified_at = models.DateTimeField(auto_now=True)
+    history = HistoricalRecords()
 
     class Meta:
         ordering = ["-created_at"]  # ordered by decending timestamp
@@ -126,6 +133,7 @@ class data_table(models.Model):
     comment = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
     modified_at = models.DateTimeField(auto_now=True)
+    history = HistoricalRecords()
 
     class Meta:
         ordering = ["-created_at",]  # ordered by decending timestamp
@@ -171,6 +179,7 @@ class case_table(models.Model):
     show_address = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
     modified_at = models.DateTimeField(auto_now=True)
+    history = HistoricalRecords()
 
     class Meta:
         ordering = ["-created_at"]  # ordered by decending timestamp
@@ -185,6 +194,7 @@ class whatsapp_table(models.Model):
     show = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
     modified_at = models.DateTimeField(auto_now=True)
+    history = HistoricalRecords()
 
     class Meta:
         ordering = ["-created_at"]  # ordered by decending timestamp

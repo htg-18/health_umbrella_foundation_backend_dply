@@ -1,4 +1,5 @@
 from django.db import models
+from simple_history.models import HistoricalRecords
 
 class pathy_table(models.Model):
     title = models.CharField(max_length=1000)
@@ -7,6 +8,7 @@ class pathy_table(models.Model):
     show = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
     modified_at = models.DateTimeField(auto_now=True)
+    history = HistoricalRecords()
 
     class Meta:
         ordering = ["-created_at"]  # ordered by decending timestamp
@@ -22,6 +24,7 @@ class effective_table(models.Model):
     show = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
     modified_at = models.DateTimeField(auto_now=True)
+    history = HistoricalRecords()
 
     class Meta:
         ordering = ["-created_at"]  # ordered by decending timestamp

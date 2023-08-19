@@ -1,6 +1,5 @@
 from django.db import models
-from django.utils import timezone
-from datetime import datetime
+from simple_history.models import HistoricalRecords
 
 
 class footer_table(models.Model):
@@ -8,6 +7,7 @@ class footer_table(models.Model):
     value = models.TextField(max_length=1000)
     created_at = models.DateTimeField(auto_now_add=True)
     modified_at = models.DateTimeField(auto_now=True)
+    history = HistoricalRecords()
 
     class Meta:
         ordering = ["-created_at"]  # ordered by decending timestamp

@@ -1,8 +1,5 @@
 from django.db import models
-from PIL import Image
-import os
-from datetime import datetime
-from django.utils import timezone
+from simple_history.models import HistoricalRecords
 
 
 class testimonial_table(models.Model):
@@ -13,6 +10,7 @@ class testimonial_table(models.Model):
     show = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
     modified_at = models.DateTimeField(auto_now=True)
+    history = HistoricalRecords()
 
     class Meta:
         ordering = ["-created_at"]  # ordered by decending timestamp
@@ -28,6 +26,7 @@ class video_table(models.Model):
     show = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
     modified_at = models.DateTimeField(auto_now=True)
+    history = HistoricalRecords()
 
     class Meta:
         ordering = ["-created_at"]  # ordered by decending timestamp
@@ -41,6 +40,7 @@ class key_value_table(models.Model):
     value = models.TextField(max_length=1000)
     created_at = models.DateTimeField(auto_now_add=True)
     modified_at = models.DateTimeField(auto_now=True)
+    history = HistoricalRecords()
 
     class Meta:
         ordering = ["-created_at"]  # ordered by decending timestamp

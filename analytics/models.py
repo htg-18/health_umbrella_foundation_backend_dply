@@ -1,3 +1,8 @@
 from django.db import models
+from simple_history.models import HistoricalRecords
 
-# Create your models here.
+class test_table(models.Model):
+    name = models.CharField(max_length=1000)
+    show = models.BooleanField()
+    history = HistoricalRecords()
+
