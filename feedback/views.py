@@ -8,7 +8,7 @@ logger = logging.getLogger('file_log')
 
 @csrf_exempt
 def add_feeback(request):
-    logger.info("\n request to feedback")
+    logger.info("\nrequest to feedback")
     if request.method!='POST':
         logger.info("request is not POST")
         return JsonResponse(data={"message": "only POST method allowed"}, status=405)

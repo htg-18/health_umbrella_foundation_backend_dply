@@ -46,7 +46,9 @@ INSTALLED_APPS = [
     "footer",
     "disease",
     "ejournal",
-    "feedback"
+    "feedback",
+    "pathy",
+    "analytics"
 ]
 
 MIDDLEWARE = [
