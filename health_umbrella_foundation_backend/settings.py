@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     "ejournal",
     "feedback",
     "pathy",
+    "header",
     "analytics"
 ]
 

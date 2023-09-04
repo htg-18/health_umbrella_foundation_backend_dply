@@ -28,6 +28,7 @@ urlpatterns = [
     path("ejournal/", include("ejournal.urls")),
     path("feedback/", include("feedback.urls")),
     path("pathy/", include("pathy.urls")),
+    path("header/", include("header.urls")),
 ]
 
 if settings.DEBUG:

@@ -33,5 +33,5 @@ def add_feeback(request):
         logger.info("feedback saved")
         return JsonResponse(data={"message":"feedback submitted successfully"}, status=200)
     except Exception as e:
-        logger.info(e)
+        logger.error(e)
         return JsonResponse(data={"message": "error while submitting request"}, status=500)
