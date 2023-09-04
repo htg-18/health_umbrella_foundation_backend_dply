@@ -13,6 +13,7 @@ https://docs.djangoproject.com/en/4.1/ref/settings/
 from pathlib import Path
 from decouple import config
 from django.utils.translation import gettext_lazy as _
+import datetime
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -197,6 +198,11 @@ MATERIAL_ADMIN_SITE = {
     # }
 }
 
+# Get today's date as a datetime object
+today_date = datetime.date.today()
+
+# Format the date as a string in "dd-mm-yyyy" format
+formatted_date = today_date.strftime("%d-%m-%Y")
 
 LOGGING = {
     'version': 1,
@@ -205,21 +211,15 @@ LOGGING = {
         'log_file': {
             'level': 'INFO',  # Set the desired logging level
             'class': 'logging.FileHandler',
-            'filename': BASE_DIR / 'logs/application.log',  # Regular log file
-        },
-        'error_file': {
-            'level': 'ERROR',  # Set the desired logging level
-            'class': 'logging.FileHandler',
-            'filename': BASE_DIR / 'logs/error.log',  # Error log file
-        },
+            'filename': BASE_DIR / (f'logs/application_{formatted_date}.log'),  # Regular log file
+        }
     },
     'loggers': {
         'file_log': {
-            'handlers': ['log_file', 'error_file'],
-            'level': 'DEBUG',  # Set the desired logging level
+            'handlers': ['log_file'],
+            'level': 'INFO',  # Set the desired logging level
             'propagate': True,
         },
-        # You can add more loggers for other components of your app
     },
 }
 

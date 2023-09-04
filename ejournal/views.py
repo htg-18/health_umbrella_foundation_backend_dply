@@ -6,8 +6,8 @@ import logging
 logger = logging.getLogger('file_log')
 
 class EjournalView(View):
-    logger.info("\nrequest to ejournal view")
     def get(self, request):
+        logger.info("\nrequest to ejournal view")
         try:
             # final data to send to user
             final_data = {}
@@ -40,15 +40,15 @@ class EjournalView(View):
 
 
 class GetAllEjournal(View):
-    logger.info("\nrequest to get all journal view")
     def get(self, request):
+        logger.info("\nrequest to get all journal view")
         try:
             # data to be sent to user
             final_data = {}
 
             # get year from request's query parameter
             year = int(request.GET.get('year'))
-            logger.info("fetched year", year)
+            logger.info("fetched year")
 
             ejournals = []
             for ejournal in ejournal_table.objects.filter(publish_date__year=year):
