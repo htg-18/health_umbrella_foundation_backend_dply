@@ -3,6 +3,7 @@ from django.views import View
 from .models import key_value_table, ejournal_table, subscription_table
 from django.http import JsonResponse
 import logging
+import re
 logger = logging.getLogger('file_log')
 
 class EjournalView(View):
@@ -51,7 +52,7 @@ class GetAllEjournal(View):
             logger.info("fetched year")
 
             ejournals = []
-            for ejournal in ejournal_table.objects.filter(publish_date__year=year):
+            for ejournal in ejournal_table.objects.filter(show=True, publish_date__year=year):
                 ejournals.append({
                     "name": ejournal.name,
                     "imageLink": ejournal.image.url,
@@ -64,6 +65,16 @@ class GetAllEjournal(View):
         except Exception as e:
             logger.error(e)
             return JsonResponse(data={"message": "error while getting data"}, status=500)
+        
+def is_valid_email(email):
+    # Define a regular expression pattern for a basic email format check
+    email_pattern = r'^[\w\.-]+@[\w\.-]+\.\w+$'
+    
+    # Use re.match to check if the email matches the pattern
+    if re.match(email_pattern, email):
+        return True
+    else:
+        return False
 
 def subscribe(request):
     logger.info("\nrequest to subscribe")
@@ -73,6 +84,8 @@ def subscribe(request):
         logger.info("fetched email")
         # create new user if not exist else set send=True
         if not subscription_table.objects.filter(email_address=email).exists():
+            if not is_valid_email(email):
+                return JsonResponse(data={"message": "invalid email address"}, status=400)
             subscriber = subscription_table(
                 email_address = email,
                 send = True
