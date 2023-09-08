@@ -19,7 +19,13 @@ def validate_webp_image(value):
 def validate_small_letters(value):
     if not value.islower():
         raise ValidationError("Only small letters allowed")
-
+    
+def validate_date_time(timestamp_str):
+    try:
+        datetime.strptime(timestamp_str, "%Y-%m-%d_%H-%M-%S")
+        return True
+    except ValueError:
+        return False
 
 class disease_table(models.Model):
     name = models.CharField(max_length=1000, validators=[validate_small_letters])
@@ -38,13 +44,12 @@ class disease_table(models.Model):
         return self.name
     
     def save(self, *args, **kwargs):
-        if not self.pk:
-            # rename the image as name_timestamp.webp
+        # rename the image as name_timestamp.webp
+        name = self.image_link.name.split('/')[-1].split('.')[0]
+        if (len(name)<=19) or (not validate_date_time(name[-19:])):
             current_datetime = datetime.now()
             timestamp = current_datetime.strftime('%Y-%m-%d_%H-%M-%S')
-            current_imagename = os.path.basename(self.image_link.name)
-            name, extension = os.path.splitext(current_imagename)
-            self.image_link.name = f"{name}_{timestamp}{extension}"
+            self.image_link.name = self.image_link.name.replace(name, f"{name}_{timestamp}")
         super().save(*args, **kwargs)
 
 
@@ -71,13 +76,12 @@ class pathy_table(models.Model):
         return f"{self.name} ({self.disease.name})"
     
     def save(self, *args, **kwargs):
-        if not self.pk:
-            # rename the image as name_timestamp.webp
+        # rename the image as name_timestamp.webp
+        name = self.image_link.name.split('/')[-1].split('.')[0]
+        if (len(name)<=19) or (not validate_date_time(name[-19:])):
             current_datetime = datetime.now()
             timestamp = current_datetime.strftime('%Y-%m-%d_%H-%M-%S')
-            current_imagename = os.path.basename(self.image_link.name)
-            name, extension = os.path.splitext(current_imagename)
-            self.image_link.name = f"{name}_{timestamp}{extension}"
+            self.image_link.name = self.image_link.name.replace(name, f"{name}_{timestamp}")
         super().save(*args, **kwargs)
 
 
@@ -135,13 +139,12 @@ class book_table(models.Model):
         return self.name
     
     def save(self, *args, **kwargs):
-        if not self.pk:
-            # rename the image as name_timestamp.webp
+        # rename the image as name_timestamp.webp
+        name = self.image_link.name.split('/')[-1].split('.')[0]
+        if (len(name)<=19) or (not validate_date_time(name[-19:])):
             current_datetime = datetime.now()
             timestamp = current_datetime.strftime('%Y-%m-%d_%H-%M-%S')
-            current_imagename = os.path.basename(self.image_link.name)
-            name, extension = os.path.splitext(current_imagename)
-            self.image_link.name = f"{name}_{timestamp}{extension}"
+            self.image_link.name = self.image_link.name.replace(name, f"{name}_{timestamp}")
         super().save(*args, **kwargs)
 
 

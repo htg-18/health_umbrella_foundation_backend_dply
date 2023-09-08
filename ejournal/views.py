@@ -4,6 +4,7 @@ from .models import key_value_table, ejournal_table, subscription_table
 from django.http import JsonResponse
 import logging
 import re
+from datetime import datetime
 logger = logging.getLogger('file_log')
 
 class EjournalView(View):
@@ -15,7 +16,7 @@ class EjournalView(View):
 
             # getting the top 3 ejournal and text
             ejournals = []
-            for ejournal in ejournal_table.objects.filter(show=True).order_by("-publish_date")[:3]:
+            for ejournal in ejournal_table.objects.filter(show=True, publish_date__lt=datetime.now()).order_by("-publish_date")[:3]:
                 ejournals.append({
                     "imageLink": ejournal.image.url,
                     "fileLink": ejournal.file.url
@@ -52,7 +53,7 @@ class GetAllEjournal(View):
             logger.info("fetched year")
 
             ejournals = []
-            for ejournal in ejournal_table.objects.filter(show=True, publish_date__year=year):
+            for ejournal in ejournal_table.objects.filter(show=True, publish_date__year=year, publish_date__lt=datetime.now()):
                 ejournals.append({
                     "name": ejournal.name,
                     "imageLink": ejournal.image.url,

@@ -16,6 +16,13 @@ def validate_small_letters(value):
 def validate_pdf_file(value):
     if not value.name.lower().endswith('.pdf'):
         raise ValidationError("Only PDF files are allowed.")
+    
+def validate_date_time(timestamp_str):
+    try:
+        datetime.strptime(timestamp_str, "%Y-%m-%d_%H-%M-%S")
+        return True
+    except ValueError:
+        return False
 
 
 class pathy_table(models.Model):
@@ -34,13 +41,12 @@ class pathy_table(models.Model):
         return self.title
     
     def save(self, *args, **kwargs):
-        if not self.pk:
-            # rename the image as name_timestamp.webp
+        # rename the image as name_timestamp.webp
+        name = self.image.name.split('/')[-1].split('.')[0]
+        if (len(name)<=19) or (not validate_date_time(name[-19:])):
             current_datetime = datetime.now()
             timestamp = current_datetime.strftime('%Y-%m-%d_%H-%M-%S')
-            current_imagename = os.path.basename(self.image.name)
-            name, extension = os.path.splitext(current_imagename)
-            self.image.name = f"{name}_{timestamp}{extension}"
+            self.image.name = self.image.name.replace(name, f"{name}_{timestamp}")
         super().save(*args, **kwargs)
     
 

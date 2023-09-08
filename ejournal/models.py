@@ -16,12 +16,19 @@ def validate_small_letters(value):
 def validate_pdf_file(value):
     if not value.name.lower().endswith('.pdf'):
         raise ValidationError("Only PDF files are allowed.")
+    
+def validate_date_time(timestamp_str):
+    try:
+        datetime.strptime(timestamp_str, "%Y-%m-%d_%H-%M-%S")
+        return True
+    except ValueError:
+        return False
 
 
 class ejournal_table(models.Model):
     name = models.CharField(max_length=1000, validators=[validate_small_letters])
-    file = models.FileField(upload_to="ejournal_docs/files/", validators=[validate_pdf_file])
     image = models.ImageField(upload_to="ejournal_docs/cover_images/", validators=[validate_webp_image])
+    file = models.FileField(upload_to="ejournal_docs/files/", validators=[validate_pdf_file])
     show = models.BooleanField(default=True)
     publish_date = models.DateTimeField()
     created_at = models.DateTimeField(auto_now_add=True)
@@ -35,20 +42,20 @@ class ejournal_table(models.Model):
         return self.name
     
     def save(self, *args, **kwargs):
-        if not self.pk:
-            # rename the image as name_timestamp.webp
+        # rename the image as name_timestamp.webp
+        name = self.image.name.split('/')[-1].split('.')[0]
+        if (len(name)<=19) or (not validate_date_time(name[-19:])):
             current_datetime = datetime.now()
             timestamp = current_datetime.strftime('%Y-%m-%d_%H-%M-%S')
-            current_imagename = os.path.basename(self.image.name)
-            name, extension = os.path.splitext(current_imagename)
-            self.image.name = f"{name}_{timestamp}{extension}"
+            self.image.name = self.image.name.replace(name, f"{name}_{timestamp}")
+        super().save(*args, **kwargs)
 
-            # rename the image as name_timestamp.pdf
+        # rename the file as file_timestamp.pdf
+        name = self.file.name.split('/')[-1].split('.')[0]
+        if (len(name)<=19) or (not validate_date_time(name[-19:])):
             current_datetime = datetime.now()
             timestamp = current_datetime.strftime('%Y-%m-%d_%H-%M-%S')
-            current_imagename = os.path.basename(self.file.name)
-            name, extension = os.path.splitext(current_imagename)
-            self.file.name = f"{name}_{timestamp}{extension}"
+            self.file.name = self.file.name.replace(name, f"{name}_{timestamp}")
         super().save(*args, **kwargs)
 
 
