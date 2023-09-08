@@ -5,11 +5,14 @@ from django.http import JsonResponse
 import logging
 import re
 from datetime import datetime
+import time
 logger = logging.getLogger('file_log')
 
 class EjournalView(View):
     def get(self, request):
+        start_time = time.time()
         logger.info("\nrequest to ejournal view")
+        logger.info(f"Time: {datetime.now()}")
         try:
             # final data to send to user
             final_data = {}
@@ -34,7 +37,7 @@ class EjournalView(View):
 
             final_data.update({"allEjournalPage": {"text": key_value_table.objects.get(key='all_ejournal_page_text').value}})
             logger.info("fetched data for allEjournalPage")
-
+            logger.info(f"Time taken: {time.time()-start_time}")
             return JsonResponse(data=final_data, status=200)
         except Exception as e:
             logger.error(e)
@@ -43,7 +46,9 @@ class EjournalView(View):
 
 class GetAllEjournal(View):
     def get(self, request):
+        start_time = time.time()
         logger.info("\nrequest to get all journal view")
+        logger.info(f"Time: {datetime.now()}")
         try:
             # data to be sent to user
             final_data = {}
@@ -61,7 +66,7 @@ class GetAllEjournal(View):
                 })
             final_data.update({"ejournals": ejournals})
             logger.info("fetched all ejournals")
-
+            logger.info(f"Time: {time.time()-start_time}")
             return JsonResponse(data=final_data, status=200)
         except Exception as e:
             logger.error(e)
@@ -78,7 +83,9 @@ def is_valid_email(email):
         return False
 
 def subscribe(request):
+    start_time = time.time()
     logger.info("\nrequest to subscribe")
+    logger.info(f"Time: {datetime.now()}")
     try:
         # check if email already in database
         email = str(request.GET.get('email'))
@@ -98,13 +105,16 @@ def subscribe(request):
             subscriber.send = True
             subscriber.save()
             logger.info("subscriber already exists")
+        logger.info(f"Time taken: {time.time()-start_time}")
         return JsonResponse(data={"message": "subscribed successfully"}, status=200)
     except Exception as e:
         logger.error(e)
         return JsonResponse(data={"message": "error while subscribing"}, status=500)
 
 def unsubscribe(request):
+    start_time = time.time()
     logger.info("\nrequest to unsubscribe")
+    logger.info(f"Time: {datetime.now()}")
     try:
         # check if email already in database
         email = str(request.GET.get('email'))
@@ -118,7 +128,7 @@ def unsubscribe(request):
         else:
             logger.error("subscriber do not exist")
             return JsonResponse(data={"message": "user not found"}, status=404)
-
+        logger.info(f"Time taken: {time.time()-start_time}")
         return JsonResponse(data={"message": "unsubscribed successfully"}, status=200)
     except Exception as e:
         logger.error(e)

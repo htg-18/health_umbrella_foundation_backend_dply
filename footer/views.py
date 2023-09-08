@@ -3,11 +3,15 @@ from django.views import View
 from .models import footer_table
 from django.http import JsonResponse
 import logging
+import time
+from datetime import datetime
 logger = logging.getLogger('file_log')
 
 class FooterView(View):
     def get(self, request):
+        start_time = time.time()
         logger.info("\nrequest to footer")
+        logger.info(f"Time: {datetime.now()}")
         try:
             # final data to be sent as response
             final_data = {
@@ -24,7 +28,7 @@ class FooterView(View):
                 }
             }
             logger.info("footer information fetched")
-
+            logger.info(f"Time taken: {time.time()-start_time}")
             return JsonResponse(data={"footer": final_data}, status=200)
         except Exception as e:
             logger.error(e)

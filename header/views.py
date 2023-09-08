@@ -1,10 +1,14 @@
 from django.http import JsonResponse
 from disease.models import disease_table
 import logging
+import time
+from datetime import datetime
 logger = logging.getLogger('file_log')
 
 def header(request):
+    start_time = time.time()
     logger.info("\nrequest to header")
+    logger.info(f"Time: {datetime.now()}")
     try:
         # data to be sent to user
         final_data = {}
@@ -20,6 +24,7 @@ def header(request):
         logger.info("created list")
         
         final_data.update({"diseaseList": disease_list})
+        logger.info(f"Time taken: {time.time()-start_time}")
         return JsonResponse(data=final_data, status=200)
     except Exception as e:
         logger.error(e)

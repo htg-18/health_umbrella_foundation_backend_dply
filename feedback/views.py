@@ -4,11 +4,15 @@ from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 import logging
 import json
+from datetime import datetime
+import time
 logger = logging.getLogger('file_log')
 
 @csrf_exempt
 def add_feeback(request):
+    start_time = time.time()
     logger.info("\nrequest to feedback")
+    logger.info(f"Time: {datetime.now()}")
     if request.method!='POST':
         logger.info("request is not POST")
         return JsonResponse(data={"message": "only POST method allowed"}, status=405)
@@ -31,6 +35,7 @@ def add_feeback(request):
         
         feedback_obj.save()
         logger.info("feedback saved")
+        logger.info(f"Time taken: {time.time()-start_time}")
         return JsonResponse(data={"message":"feedback submitted successfully"}, status=200)
     except Exception as e:
         logger.error(e)

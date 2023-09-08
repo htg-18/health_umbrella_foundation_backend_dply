@@ -3,12 +3,16 @@ from .models import disease_table, pathy_table, summary_table, book_table, sourc
 from django.http import JsonResponse
 from django.db import models
 import logging
+import time
+from datetime import datetime
 logger = logging.getLogger('file_log')
 DIRECT_CASE = 'directCase'
 
 class DiseaseView(View):
     def get(self, request, disease):
+        start_time = time.time()
         logger.info("\nrequest to disease view")
+        logger.info(f"Time: {datetime.now()}")
         try:
             disease_object = disease_table.objects.get(name=disease)
 
@@ -64,7 +68,7 @@ class DiseaseView(View):
 
             final_data.update({"pathies": all_pathies})
             logger.info("all therapies data fetched")
-
+            logger.info(f"Time taken: {time.time()-start_time}")
             return JsonResponse(data=final_data, status=200)
         except Exception as e:
             logger.error(e)
@@ -73,7 +77,9 @@ class DiseaseView(View):
 
 class TherapyView(View):
     def get(self, request, disease, pathy):
+        start_time = time.time()
         logger.info("\nrequest to therapy view")
+        logger.info(f"Time: {datetime.now()}")
         try:
             # check whether show=True for disease
             disease_object = disease_table.objects.get(name=disease)
@@ -100,7 +106,7 @@ class TherapyView(View):
 
             final_data.update({'informationSources': list(information_sources)})
             logger.info("all information source fetched")
-            
+            logger.info(f"Time taken: {time.time()-start_time}")
             return JsonResponse(data=final_data, status=200)
         except Exception as e:
             logger.error(e)
@@ -110,7 +116,9 @@ class TherapyView(View):
 
 class BooksView(View):
     def get(self, request, disease, pathy):
+        start_time = time.time()
         logger.info("\nrequest to book view")
+        logger.info(f"Time: {datetime.now()}")
         try:
             # check whether show=True for disease
             disease_object = disease_table.objects.get(name=disease)
@@ -140,7 +148,7 @@ class BooksView(View):
             # get all the relevant books data
             final_data.update({"books": book_data})
             logger.info("all books fetched")
-
+            logger.info(f"Time taken: {time.time()-start_time}")
             return JsonResponse(data=final_data, status=200)
         except Exception as e:
             logger.error(e)
@@ -149,7 +157,9 @@ class BooksView(View):
 
 class SourceView(View):
     def get(self, request, disease, pathy, source):
+        start_time = time.time()
         logger.info("\nrequest to source view")
+        logger.info(f"Time: {datetime.now()}")
         try:
             # check whether show=True for disease
             disease_object = disease_table.objects.get(name=disease)
@@ -206,7 +216,7 @@ class SourceView(View):
                 # add whatsapp data if source is social media
                 final_data.update({'whatsappData': whatsapp_table.objects.get(pathy__pk=pathy_object.pk, show=True).link})
                 logger.info("whatsapp data fetched")
-
+            logger.info(f"Time taken: {time.time()-start_time}")
             return JsonResponse(data=final_data, status=200)
         except Exception as e:
             logger.error(e)
@@ -215,7 +225,9 @@ class SourceView(View):
 
 class CaseView(View):
     def get(self, request, disease, pathy, case_id):
+        start_time = time.time()
         logger.info("\nrequest to case view")
+        logger.info(f"Time: {datetime.now()}")
         try:
             case_object = case_table.objects.get(pk=case_id)
 
@@ -271,6 +283,7 @@ class CaseView(View):
 
             # add personal details to final_data
             final_data.update({"personalDetails": personal_details})
+            logger.info(f"Time taken: {time.time()-start_time}")
             return JsonResponse(data=final_data, status=200)
         except Exception as e:
             logger.error(e)

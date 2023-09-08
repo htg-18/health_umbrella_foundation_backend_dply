@@ -4,11 +4,15 @@ from django.http import JsonResponse
 from .models import key_value_table, testimonial_table, video_table
 from disease.models import disease_table
 import logging
+import time
+from datetime import datetime
 logger = logging.getLogger('file_log')
 
 class HomeView(View):
     def get(self, request):
+        start_time = time.time()
         logger.info("\nrequest to home")
+        logger.info(f"Time: {datetime.now()}")
         try:
             # this will be sent to user
             final_data = {}
@@ -57,7 +61,7 @@ class HomeView(View):
             # getting data for bottomSearchPage
             final_data.update({"bottomSearchPage": {"text": key_value_table.objects.get(key="second_search_text").value}})
             logger.info("bottom search data fetched")
-
+            logger.info(f"Time taken: {time.time()-start_time}")
             return JsonResponse(data=final_data, status=200)
         except Exception as e:
             logger.error(e)
