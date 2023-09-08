@@ -166,8 +166,8 @@ MEDIA_URL = f"https://{AWS_S3_CUSTOM_DOMAIN}/media/"
 # STATIC_ROOT = BASE_DIR / "static"
 
 # CORS header settings
-# CORS_ORIGIN_ALLOW_ALL = config("CORS_ORIGIN_ALLOW_ALL")
-# CORS_ALLOW_CREDENTIALS = config("CORS_ALLOW_CREDENTIALS")
+CORS_ORIGIN_ALLOW_ALL = config("CORS_ORIGIN_ALLOW_ALL")
+CORS_ALLOW_CREDENTIALS = config("CORS_ALLOW_CREDENTIALS")
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field

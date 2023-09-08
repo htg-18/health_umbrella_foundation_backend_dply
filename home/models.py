@@ -1,11 +1,27 @@
 from django.db import models
 from simple_history.models import HistoricalRecords
+from PIL import Image
+from django.core.exceptions import ValidationError
+from datetime import datetime
+import os
+
+def validate_webp_image(value):
+    if not value.name.lower().endswith('.webp'):
+        raise ValidationError("Only webp images allowed")
+    
+def validate_small_letters(value):
+    if not value.islower():
+        raise ValidationError("Only small letters allowed")
+
+def validate_pdf_file(value):
+    if not value.name.lower().endswith('.pdf'):
+        raise ValidationError("Only PDF files are allowed.")
 
 
 class testimonial_table(models.Model):
-    heading = models.CharField(max_length=100)
+    heading = models.CharField(max_length=100, validators=[validate_small_letters])
     text = models.TextField(max_length=1000)
-    name = models.CharField(max_length=50)
+    name = models.CharField(max_length=50, validators=[validate_small_letters])
     location = models.CharField(max_length=100)
     show = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -21,7 +37,7 @@ class testimonial_table(models.Model):
 
 class video_table(models.Model):
     heading = models.CharField(max_length=50)
-    image = models.ImageField(upload_to="video_table_images/")
+    image = models.ImageField(upload_to="video_table_images/", validators=[validate_webp_image])
     ytplaylist_link = models.URLField(max_length=300)
     show = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -33,6 +49,16 @@ class video_table(models.Model):
 
     def __str__(self):
         return self.heading
+    
+    def save(self, *args, **kwargs):
+        if not self.pk:
+            # rename the image as name_timestamp.webp
+            current_datetime = datetime.now()
+            timestamp = current_datetime.strftime('%Y-%m-%d_%H-%M-%S')
+            current_imagename = os.path.basename(self.image.name)
+            name, extension = os.path.splitext(current_imagename)
+            self.image.name = f"{name}_{timestamp}{extension}"
+        super().save(*args, **kwargs)
 
 
 class key_value_table(models.Model):
