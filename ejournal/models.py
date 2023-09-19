@@ -48,7 +48,6 @@ class ejournal_table(models.Model):
             current_datetime = datetime.now()
             timestamp = current_datetime.strftime('%Y-%m-%d_%H-%M-%S')
             self.image.name = self.image.name.replace(name, f"{name}_{timestamp}")
-        super().save(*args, **kwargs)
 
         # rename the file as file_timestamp.pdf
         name = self.file.name.split('/')[-1].split('.')[0]

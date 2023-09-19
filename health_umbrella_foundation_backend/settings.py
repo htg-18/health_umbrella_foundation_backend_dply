@@ -51,7 +51,8 @@ INSTALLED_APPS = [
     "feedback",
     "pathy",
     "header",
-    "analytics"
+    "analytics",
+    "clinics"
 ]
 
 MIDDLEWARE = [

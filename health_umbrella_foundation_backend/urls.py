@@ -29,6 +29,7 @@ urlpatterns = [
     path("feedback/", include("feedback.urls")),
     path("pathy/", include("pathy.urls")),
     path("header/", include("header.urls")),
+    path("clinics/", include("clinics.urls")),
 ]
 
 if settings.DEBUG:
