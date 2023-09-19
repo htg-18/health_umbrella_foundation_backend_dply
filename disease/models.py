@@ -127,7 +127,7 @@ class book_table(models.Model):
     )
     text = models.TextField()
     image_link = models.ImageField(upload_to="book_images/", validators=[validate_webp_image])
-    buy_link = models.URLField(max_length=2000, null=True)
+    buy_link = models.URLField(max_length=2000, null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     modified_at = models.DateTimeField(auto_now=True)
     history = HistoricalRecords()
@@ -198,25 +198,26 @@ class case_table(models.Model):
         ]
     )
     comment = models.TextField()
-    first_name = models.CharField(max_length=1000, null=True, validators=[validate_small_letters])
-    last_name = models.CharField(max_length=1000, null=True, validators=[validate_small_letters])
+    first_name = models.CharField(max_length=1000, null=True, blank=True, validators=[validate_small_letters])
+    last_name = models.CharField(max_length=1000, null=True, blank=True, validators=[validate_small_letters])
     sex = models.ForeignKey(sex_table, on_delete=models.CASCADE)
     age = models.IntegerField(
         validators=[
             MinValueValidator(1, 'age should be greater than or equal to 1'),
         ],
-        null=True
+        null=True,
+        blank=True
     )
-    occupation = models.CharField(max_length=1000, null=True)
-    email_address = models.CharField(max_length=1000, null=True, validators=[validate_small_letters])
-    phone_number = models.CharField(max_length=50, null=True)
-    street_address = models.CharField(max_length=1000, null=True)
-    zip_code = models.CharField(max_length=50, null=True)
-    state = models.CharField(max_length=1000, null=True)
-    country = models.CharField(max_length=1000, null=True)
-    history_link = models.URLField(max_length=2000, null=True)
-    allergies_link = models.URLField(max_length=2000, null=True)
-    reports_link = models.URLField(max_length=2000, null=True)
+    occupation = models.CharField(max_length=1000, null=True, blank=True)
+    email_address = models.CharField(max_length=1000, null=True, blank=True, validators=[validate_small_letters])
+    phone_number = models.CharField(max_length=50, null=True, blank=True)
+    street_address = models.CharField(max_length=1000, null=True, blank=True)
+    zip_code = models.CharField(max_length=50, null=True, blank=True)
+    state = models.CharField(max_length=1000, null=True, blank=True)
+    country = models.CharField(max_length=1000, null=True, blank=True)
+    history_link = models.URLField(max_length=2000, null=True, blank=True)
+    allergies_link = models.URLField(max_length=2000, null=True, blank=True)
+    reports_link = models.URLField(max_length=2000, null=True, blank=True)
     show = models.BooleanField(default=True)
     show_name = models.BooleanField(default=False)
     show_email = models.BooleanField(default=False)
