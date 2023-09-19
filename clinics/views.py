@@ -16,13 +16,18 @@ def get_clinics(request):
         # filtering clinics data
         clinics_list = []
         for clinic in clinics_table.objects.filter(show=True):
+            tag_list = []
+            for tag in clinic.tags.split(','):
+                temp_tag = tag.replace('_',' ')
+                tag_list.append(temp_tag)
+
             clinics_list.append({
                 "name": clinic.name,
                 "imageLink": clinic.image.url,
                 "location": clinic.location,
                 "summary": clinic.summary,
                 "contact": clinic.contact,
-                "tagList": clinic.tags.split(',')
+                "tagList": tag_list
             })
         logger.info("fetched all clinics data")
         final_data.update({"clinicsList": clinics_list})

@@ -9,7 +9,7 @@ def validate_small_letters(value):
     
 def validate_no_space(value):
     if ' ' in str(value):
-        raise ValidationError("Spaces not allowed")
+        raise ValidationError("Spaces not allowed, if some tag contains space then use _ instead")
 
 def validate_date_time(timestamp_str):
     try:
