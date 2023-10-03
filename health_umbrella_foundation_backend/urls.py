@@ -31,6 +31,7 @@ urlpatterns = [
     path("header/", include("header.urls")),
     path("clinics/", include("clinics.urls")),
     path("members/", include("members.urls")),
+    path("user-forms/", include("user_forms.urls")),
 ]
 
 if settings.DEBUG:
