@@ -1,6 +1,6 @@
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
-from .models import join_us_table, share_experience_table
+from .models import join_us_table, share_experience_table, ask_suggestion_table
 from datetime import datetime, timedelta
 import time
 import logging
@@ -170,6 +170,62 @@ def share_experience(request):
             share_experience_obj.reports = reports_obj
         
         share_experience_obj.save()
+        logger.info("information saved")
+        logger.info(f"time taken: {time.time()-start_time}")
+        return JsonResponse(data={"message": "information saved successfully"}, status=200)
+    except Exception as e:
+        logger.error(e)
+        return JsonResponse(data={"message": "error while saving information"}, status=500)
+
+@csrf_exempt
+def ask_suggestion(request):
+    start_time = time.time()
+    logger.info("\nrequest to ask suggestion")
+    logger.info(f"Time: {datetime.now()}")
+
+    # verify request method
+    if request.method != 'POST':
+        logger.error("invalid request method")
+        return JsonResponse(data={"message": f"method {request.method} does not exist"}, status=405)
+    
+    try:
+        if int(request.POST['age'])<0 or int(request.POST['age'])>200:
+            return JsonResponse(data={"message": "invalid age"}, status=400)
+
+        ask_suggestion_obj = ask_suggestion_table(
+            name = request.POST["name"],
+            age = request.POST["age"],
+            gender = request.POST["gender"],
+            city = request.POST["city"],
+            state = request.POST["state"],
+            country = request.POST["country"],
+            email_address = request.POST["email_address"],
+            query = request.POST["query"],
+        )
+        logger.info("object created")
+        logger.info("checking optional information")
+        if request.POST.get("phone_number") is not None:
+            ask_suggestion_obj.phone_number = request.POST["phone_number"]
+
+        if request.POST.get("disease") is not None:
+            ask_suggestion_obj.disease = request.POST["disease"]
+
+        if request.POST.get("pathies") is not None:
+            ask_suggestion_obj.pathies = request.POST["pathies"]
+
+        if request.POST.get("show_email") is not None:
+            ask_suggestion_obj.show_email = True if request.POST["show_email"]=="true" else False
+        
+        if request.POST.get("show_study") is not None:
+            ask_suggestion_obj.show_study = True if request.POST["show_study"]=="true" else False
+
+        if request.FILES.get("reports") is not None:
+            reports_obj = request.FILES["reports"]
+            if not reports_obj.name.lower().endswith('.pdf'):
+                return JsonResponse(data={"message": "invalid document format"}, status=400)
+            ask_suggestion_obj.reports = reports_obj
+        
+        ask_suggestion_obj.save()
         logger.info("information saved")
         logger.info(f"time taken: {time.time()-start_time}")
         return JsonResponse(data={"message": "information saved successfully"}, status=200)
