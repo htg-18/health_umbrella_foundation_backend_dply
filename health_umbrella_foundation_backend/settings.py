@@ -100,14 +100,14 @@ DATABASES = {
     # }
 
     # AWS RDS connection settings
-    "default": {
-        "ENGINE": "django.db.backends.postgresql",
-        "NAME": config("DATABASE_NAME"),
-        "USER": config("DATABASE_USER"),
-        "PASSWORD": config("PASSWORD"),
-        "HOST": config("HOST"),
-        "PORT": config("PORT"),
-    }
+    # "default": {
+    #     "ENGINE": "django.db.backends.postgresql",
+    #     "NAME": config("DATABASE_NAME"),
+    #     "USER": config("DATABASE_USER"),
+    #     "PASSWORD": config("PASSWORD"),
+    #     "HOST": config("HOST"),
+    #     "PORT": config("PORT"),
+    # }
 }
 
 
