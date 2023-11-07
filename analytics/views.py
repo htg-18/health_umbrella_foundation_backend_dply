@@ -25,4 +25,4 @@ async def get_offg(request):
 async def set_offg(request):
     global offg
     offg = (not offg)
-    return JsonResponse(data={"offg": off}, status=200)
+    return JsonResponse(data={"offg": offg}, status=200)
