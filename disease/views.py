@@ -5,8 +5,20 @@ from django.db import models
 import logging
 import time
 from datetime import datetime
+from analytics.models import disease_analytics_table, pathy_analytics_table
+from django.utils import timezone
 logger = logging.getLogger('file_log')
 DIRECT_CASE = 'directCase'
+
+def update_disease_analytics(disease_object):
+    disease_analytics_obj, created = disease_analytics_table.objects.get_or_create(disease=disease_object, date=timezone.now().date())
+    disease_analytics_obj.count += 1
+    disease_analytics_obj.save()
+
+def update_pathy_analytics(pathy_object):
+    pathy_analytics_obj, created = pathy_analytics_table.objects.get_or_create(pathy=pathy_object, date=timezone.now().date())
+    pathy_analytics_obj.count += 1
+    pathy_analytics_obj.save()
 
 class DiseaseView(View):
     def get(self, request, disease):
@@ -22,6 +34,9 @@ class DiseaseView(View):
             # return 404 if data not present or not allowed
             if (disease_object is None) or (disease_object.show is False):
                 return JsonResponse(data=final_data, status=404)
+            
+            # update the count in analytics table
+            update_disease_analytics(disease_object=disease_object)
             
             final_data.update({'disease': disease})
             final_data.update({'text': disease_object.text})
@@ -91,6 +106,10 @@ class TherapyView(View):
             if pathy_object.show is False:
                 return JsonResponse(data={"message": "No data for this Pathy"}, status=404)
             
+            # update the count in analytics table
+            update_disease_analytics(disease_object=disease_object)
+            update_pathy_analytics(pathy_object=pathy_object)
+
             # final data to give to user
             final_data = {}
             final_data.update({'pathy': pathy})
@@ -129,6 +148,10 @@ class BooksView(View):
             pathy_object = pathy_table.objects.get(disease__name=disease, name=pathy)
             if pathy_object.show is False:
                 return JsonResponse(data={"message": "No data for this Pathy"}, status=404)
+
+            # update the count in analytics table
+            update_disease_analytics(disease_object=disease_object)
+            update_pathy_analytics(pathy_object=pathy_object)
 
             # final data to give to user
             final_data = {}
@@ -179,9 +202,13 @@ class SourceView(View):
                 logger.info("source show is false")
                 return JsonResponse(data={"message": "No data for this source"}, status=404)
 
+            # update the count in analytics table
+            update_disease_analytics(disease_object=disease_object)
+            update_pathy_analytics(pathy_object=pathy_object)
+
             # data to be sent to user
             final_data = {}
-            final_data.update({'text': source_table.objects.get(name = source).text})
+            final_data.update({'text': source_object.text})
             logger.info("source text fetched")
 
             if source=='directCase':
@@ -229,13 +256,28 @@ class CaseView(View):
         logger.info("\nrequest to case view")
         logger.info(f"Time: {datetime.now()}")
         try:
-            case_object = case_table.objects.get(pk=case_id)
+            # check whether show=True for disease
+            disease_object = disease_table.objects.get(name=disease)
+            if disease_object.show is False:
+                logger.info("disease show is false")
+                return JsonResponse(data={"message": "No data for this disease"}, status=404)
+            
+            # check whether show=True for pathy
+            pathy_object = pathy_table.objects.get(disease__name=disease, name=pathy)
+            if pathy_object.show is False:
+                logger.info("pathy show is false")
+                return JsonResponse(data={"message": "No data for this Pathy"}, status=404)
 
             # check whether show=True for case
+            case_object = case_table.objects.get(pk=case_id)
             if case_object.show is False:
                 logger.info("case view is false")
                 return JsonResponse(data={"message": "No data for this source"}, status=404)
             
+            # update the count in analytics table
+            update_disease_analytics(disease_object=disease_object)
+            update_pathy_analytics(pathy_object=pathy_object)
+
             # data to send to user
             final_data = {}
             final_data.update({"caseId": str(case_id)})
