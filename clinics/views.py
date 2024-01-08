@@ -25,6 +25,8 @@ def get_clinics(request):
                 "name": clinic.name,
                 "imageLink": clinic.image.url,
                 "location": clinic.location,
+                "address": clinic.address,
+                "locationLink": clinic.locationLink,
                 "summary": clinic.summary,
                 "contact": clinic.contact,
                 "tagList": tag_list

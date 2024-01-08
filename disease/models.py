@@ -86,7 +86,7 @@ class pathy_table(models.Model):
 
 
 class source_table(models.Model):
-    name = models.CharField(max_length=1000, choices=SOURCE_CHOICES, validators=[validate_small_letters])
+    name = models.CharField(max_length=1000, choices=SOURCE_CHOICES)
     text = models.TextField()
     show = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
