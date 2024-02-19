@@ -28,9 +28,10 @@ SECRET_KEY = config("SECRET_KEY")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = config("DEBUG")
 
-ALLOWED_HOSTS = ["*"]
+# ALapplication
+ALLOWED_HOSTS = [".vercel.app"] #only for deployment on vercel
 
-
+s
 # Application definition
 
 INSTALLED_APPS = [
