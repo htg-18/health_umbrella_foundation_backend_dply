@@ -29,7 +29,7 @@ SECRET_KEY = config("SECRET_KEY")
 DEBUG = config("DEBUG")
 
 # ALapplication
-ALLOWED_HOSTS = [".vercel.app"] #only for deployment on vercel
+ALLOWED_HOSTS = ["*"] #only for deployment on vercel
 
 
 # Application definition
@@ -94,10 +94,10 @@ WSGI_APPLICATION = "health_umbrella_foundation_backend.wsgi.application"
 # Database
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
 DATABASES = {
-#     "default": {
-#         "ENGINE": "django.db.backends.sqlite3",
-#         "NAME": BASE_DIR / "db.sqlite3",
-#     }
+    "default": {
+        "ENGINE": "django.db.backends.sqlite3",
+        "NAME": BASE_DIR / "db.sqlite3",
+    }
 
     # AWS RDS connection settings
     # "default": {
@@ -109,14 +109,14 @@ DATABASES = {
     #     "PORT": config("PORT"),
     # }
 
-       "default": {
-        "ENGINE": "django.db.backends.postgresql",
-        # "NAME": config("DATABASE_NAME"),
-        # "USER": config("DATABASE_USER"),
-        # "PASSWORD": config("PASSWORD"),
-        "HOST": config("DATABASE URL"),
-        # "PORT": config("PORT"),
-    }
+    #    "default": {
+    #     "ENGINE": "django.db.backends.postgresql",
+    #     # "NAME": config("DATABASE_NAME"),
+    #     # "USER": config("DATABASE_USER"),
+    #     # "PASSWORD": config("PASSWORD"),
+    #     "HOST": config("DATABASE URL"),
+    #     # "PORT": config("PORT"),
+    # }
 }
 
 # Password validation
@@ -173,12 +173,12 @@ USE_TZ = True
 # MEDIA_URL = f"https://{AWS_S3_CUSTOM_DOMAIN}/media/"
 
 # setting to run application on EC2 without s3
-# STATIC_URL = "/static/"
-# STATIC_ROOT = BASE_DIR / "static"
+STATIC_URL = "/static/"
+STATIC_ROOT = BASE_DIR / "static"
 
 # CORS header settings
-# CORS_ORIGIN_ALLOW_ALL = config("CORS_ORIGIN_ALLOW_ALL")
-# CORS_ALLOW_CREDENTIALS = config("CORS_ALLOW_CREDENTIALS")
+CORS_ORIGIN_ALLOW_ALL = config("CORS_ORIGIN_ALLOW_ALL")
+CORS_ALLOW_CREDENTIALS = config("CORS_ALLOW_CREDENTIALS")
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
